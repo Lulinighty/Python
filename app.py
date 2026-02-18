@@ -237,7 +237,7 @@ def page_moyenne():
                     if moyenne < 10:
                         st.error(f"Courage ! Il manque {10 - moyenne:.2f} points pour la moyenne.")
                     elif 10 <= moyenne < 12:
-                        st.warning("Passable. Tu as la moyenne !")
+                        st.warning("Tu as la moyenne !")
                     elif 12 <= moyenne < 14:
                         st.info("Mention Assez Bien ! Bravo !")
                     elif 14 <= moyenne < 16:
@@ -270,3 +270,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
