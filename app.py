@@ -250,6 +250,13 @@ def page_moyenne():
                 st.progress(min(moyenne / 20, 1.0))
 
 # --- 5. BOUTIQUE DE PERLES (VERSION AVEC DÉTAIL COMPLET) ---
+def update_stock():
+    # Synchronise les modifs du tableau de stock avec le session_state
+    if "editor_stock_unique" in st.session_state:
+        for row in st.session_state["editor_stock_unique"]["edited_rows"]:
+            for key, value in st.session_state["editor_stock_unique"]["edited_rows"][row].items():
+                st.session_state.stock_perles.iloc[row, st.session_state.stock_perles.columns.get_loc(key)] = value
+
 def page_boutique():
     show_header("Gestion Boutique Perles", "💎")
     
@@ -396,6 +403,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
