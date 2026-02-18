@@ -57,7 +57,6 @@ def show_header(title, emoji):
 def page_probabilites():
     show_header("Probabilités", "🎲")
     
-    # Ajout de l'onglet "Arbre" ici
     tab1, tab2, tab3, tab4 = st.tabs(["Simple", "Combinatoire", "Binomiale", "🌳 Arbre"])
     
     with tab1:
@@ -110,7 +109,6 @@ def page_probabilites():
         fig = dessiner_arbre(pa, pba, pbna)
         st.pyplot(fig)
         
-        # Calculs de l'arbre
         st.info("💡 **Calculs des intersections :**")
         p_a_inter_b = pa * pba
         p_na_inter_b = (1 - pa) * pbna
@@ -191,10 +189,74 @@ def page_fonctions():
             ax.grid(True)
             st.pyplot(fig)
 
+# --- 4. CALCULATEUR DE MOYENNE ---
+def page_moyenne():
+    show_header("Calculateur de Moyenne", "🎓")
+    st.markdown("Rentre tes notes et coefficients dans le tableau ci-dessous.")
+    
+    # Création d'un tableau vide par défaut
+    default_notes = pd.DataFrame({
+        "Matière": ["Maths", "Physique", "Anglais"],
+        "Note": [15.0, 12.0, 14.5],
+        "Coefficient": [4, 3, 2]
+    })
+    
+    # Tableau éditable
+    df_notes = st.data_editor(
+        default_notes, 
+        num_rows="dynamic", 
+        column_config={
+            "Note": st.column_config.NumberColumn("Note (/20)", min_value=0, max_value=20, step=0.25),
+            "Coefficient": st.column_config.NumberColumn("Coefficient", min_value=1, step=1)
+        },
+        key="moyenne_editor"
+    )
+
+    if st.button("Calculer ma moyenne"):
+        if df_notes.empty:
+            st.warning("Ajoute des notes pour calculer la moyenne.")
+        else:
+            # Calcul mathématique : Somme(Note * Coeff) / Somme(Coeff)
+            total_points = (df_notes["Note"] * df_notes["Coefficient"]).sum()
+            total_coeffs = df_notes["Coefficient"].sum()
+            
+            if total_coeffs == 0:
+                st.error("Le total des coefficients ne peut pas être zéro.")
+            else:
+                moyenne = total_points / total_coeffs
+                
+                # Affichage du résultat
+                st.markdown("---")
+                col_res1, col_res2 = st.columns([1, 2])
+                
+                with col_res1:
+                    st.metric(label="Moyenne Générale", value=f"{moyenne:.2f} / 20")
+                
+                with col_res2:
+                    # Message personnalisé selon la note (Mentions)
+                    if moyenne < 10:
+                        st.error(f"Courage ! Il manque {10 - moyenne:.2f} points pour la moyenne.")
+                    elif 10 <= moyenne < 12:
+                        st.warning("Passable. Tu as la moyenne !")
+                    elif 12 <= moyenne < 14:
+                        st.info("Mention Assez Bien ! Bravo !")
+                    elif 14 <= moyenne < 16:
+                        st.success("Mention Bien ! Super boulot !")
+                    else:
+                        st.balloons()
+                        st.success("Mention Très Bien ! Excellent !!")
+                
+                # Barre de progression visuelle
+                st.progress(min(moyenne / 20, 1.0))
+
+
 # --- MENU PRINCIPAL (Sidebar) ---
 def main():
     st.sidebar.title("Super Calc Maths Pour Ma Nana <3")
-    choix = st.sidebar.radio("Menu", ["Probabilités", "Suites", "Fonctions Affines"])
+    
+    # Mise à jour du menu avec la nouvelle option
+    choix = st.sidebar.radio("Menu", ["Probabilités", "Suites", "Fonctions Affines", "Moyenne Scolaire"])
+    
     st.sidebar.info("Application compatible Mobile & PC")
 
     if choix == "Probabilités":
@@ -203,6 +265,8 @@ def main():
         page_suites()
     elif choix == "Fonctions Affines":
         page_fonctions()
+    elif choix == "Moyenne Scolaire":  # Appel de la nouvelle page
+        page_moyenne()
 
 if __name__ == "__main__":
     main()
