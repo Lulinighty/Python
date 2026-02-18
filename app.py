@@ -366,7 +366,6 @@ def page_boutique():
                         st.metric("Coût Matériel", f"{cout_materiel:.2f} €")
                     
                     with col2:
-                        st.metric("Coût de Revient Total", f"{total_revient:.2f} €")
                         st.success(f"**✨ PRIX DE VENTE : {prix_final:.2f} € ✨**")
                         
 # --- MENU PRINCIPAL (Sidebar) ---
@@ -392,6 +391,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
