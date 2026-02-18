@@ -254,8 +254,8 @@ def page_boutique():
     show_header("Gestion Boutique Perles", "💎")
     if 'stock_perles' not in st.session_state:
         st.session_state.stock_perles = pd.DataFrame({
-            "Nom de la Perle": ["Perle Dorée", "Perle Verre Bleue", "Fermoir Argent"],
-            "Prix Unitaire (€)": [0.05, 0.10, 0.50]
+            "Nom de la Perle": ["Charms nœud de papillon", "Charms étoile", "Cœur magnétique", "Perle cristal 3mm", "Aiguille bout rond"],
+            "Prix Unitaire (€)": [0.0625, 0.0132, 0.085, 0.01, 0.01]
         })
 
     # Initialisation du projet actuel
@@ -355,6 +355,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
