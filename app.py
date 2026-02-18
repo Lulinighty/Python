@@ -252,8 +252,6 @@ def page_moyenne():
 # --- 5. BOUTIQUE DE PERLES ---
 def page_boutique():
     show_header("Gestion Boutique Perles", "💎")
-
-    # Initialisation du stock
     if 'stock_perles' not in st.session_state:
         st.session_state.stock_perles = pd.DataFrame({
             "Nom de la Perle": ["Perle Dorée", "Perle Verre Bleue", "Fermoir Argent"],
@@ -354,6 +352,6 @@ def main():
     elif choix == "Boutique de Perles":
         page_boutique()
 
+
 if __name__ == "__main__":
     main()
-
