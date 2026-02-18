@@ -252,26 +252,66 @@ def page_moyenne():
 # --- 5. BOUTIQUE DE PERLES ---
 def page_boutique():
     show_header("Gestion Boutique Perles", "💎")
+    
+    # Initialisation du Stock avec ta nouvelle liste
     if 'stock_perles' not in st.session_state:
-        st.session_state.stock_perles = pd.DataFrame({
-            "Nom de la Perle": ["Charms nœud de papillon", "Charms étoile", "Cœur magnétique", "Perle cristal 3mm", "Aiguille bout rond"],
-            "Prix Unitaire (€)": [0.0625, 0.0132, 0.085, 0.01, 0.01]
-        })
+        data_initiale = [
+            {"Nom de la Perle": "Charms nœud de papillon", "Prix Unitaire (€)": 0.0625},
+            {"Nom de la Perle": "Charms étoile", "Prix Unitaire (€)": 0.0132},
+            {"Nom de la Perle": "Cœur magnétique", "Prix Unitaire (€)": 0.085},
+            {"Nom de la Perle": "Perle cristal 3mm", "Prix Unitaire (€)": 0.01},
+            {"Nom de la Perle": "Aiguille bout rond", "Prix Unitaire (€)": 0.01},
+            {"Nom de la Perle": "Charms note de musique", "Prix Unitaire (€)": 0.0565},
+            {"Nom de la Perle": "Charms coeur clé", "Prix Unitaire (€)": 0.0565},
+            {"Nom de la Perle": "Maillon", "Prix Unitaire (€)": 0.01},
+            {"Nom de la Perle": "Aiguille bout plat", "Prix Unitaire (€)": 0.0113},
+            {"Nom de la Perle": "Perle bleu 6 mm", "Prix Unitaire (€)": 0.01},
+            {"Nom de la Perle": "Perle noir 6 mm", "Prix Unitaire (€)": 0.01},
+            {"Nom de la Perle": "Perle rose fushia 6mm", "Prix Unitaire (€)": 0.01},
+            {"Nom de la Perle": "Charms guitare", "Prix Unitaire (€)": 0.0295},
+            {"Nom de la Perle": "Charms aile", "Prix Unitaire (€)": 0.012},
+            {"Nom de la Perle": "Fleur creuse", "Prix Unitaire (€)": 0.031},
+            {"Nom de la Perle": "Papillon bleu", "Prix Unitaire (€)": 0.047},
+            {"Nom de la Perle": "Nœud de papillon blanc", "Prix Unitaire (€)": 0.0184},
+            {"Nom de la Perle": "Pochette étoile", "Prix Unitaire (€)": 0.0300},
+            {"Nom de la Perle": "Attache coeur", "Prix Unitaire (€)": 0.133},
+            {"Nom de la Perle": "Autocollant coeur", "Prix Unitaire (€)": 0.1},
+            {"Nom de la Perle": "Coeur blanc nacré", "Prix Unitaire (€)": 0.0226},
+            {"Nom de la Perle": "Chaine", "Prix Unitaire (€)": 0.3},
+            {"Nom de la Perle": "Chaine cœur", "Prix Unitaire (€)": 0.3},
+            {"Nom de la Perle": "Rond étoile noir", "Prix Unitaire (€)": 0.0075},
+            {"Nom de la Perle": "Pochette d'envoi", "Prix Unitaire (€)": 0.275},
+            {"Nom de la Perle": "Etoile bleu", "Prix Unitaire (€)": 0.0313},
+            {"Nom de la Perle": "Pokemon acrylique", "Prix Unitaire (€)": 0.4988},
+            {"Nom de la Perle": "Charms feuille blanc", "Prix Unitaire (€)": 0.012},
+            {"Nom de la Perle": "Fleur de cerisier", "Prix Unitaire (€)": 0.022},
+            {"Nom de la Perle": "Cordon fil noir", "Prix Unitaire (€)": 0.0123},
+            {"Nom de la Perle": "Perle rond multicolore 6mm", "Prix Unitaire (€)": 0.0117},
+            {"Nom de la Perle": "Méduse", "Prix Unitaire (€)": 0.08},
+            {"Nom de la Perle": "Carton présentation", "Prix Unitaire (€)": 0.0366},
+            {"Nom de la Perle": "Perle alphabet", "Prix Unitaire (€)": 0.00395},
+            {"Nom de la Perle": "Fleur cloche", "Prix Unitaire (€)": 0.041},
+            {"Nom de la Perle": "Charms étoile y2k", "Prix Unitaire (€)": 0.033},
+            {"Nom de la Perle": "Petite Fleur blanche", "Prix Unitaire (€)": 0.0061},
+            {"Nom de la Perle": "Attache étoile", "Prix Unitaire (€)": 0.15},
+            {"Nom de la Perle": "Coeur creu", "Prix Unitaire (€)": 0.0415},
+            {"Nom de la Perle": "Petite étoile coloré", "Prix Unitaire (€)": 0.0253},
+            {"Nom de la Perle": "Barrette étoile", "Prix Unitaire (€)": 0.0167},
+            {"Nom de la Perle": "Goutte d'eau rouge", "Prix Unitaire (€)": 0.039},
+            {"Nom de la Perle": "Goutte d'eau blanche", "Prix Unitaire (€)": 0.0356},
+            {"Nom de la Perle": "Cordon multicolore", "Prix Unitaire (€)": 0.0183},
+            {"Nom de la Perle": "Perle action", "Prix Unitaire (€)": 0.01}
+        ]
+        st.session_state.stock_perles = pd.DataFrame(data_initiale)
 
-    # Initialisation du projet actuel
     if 'projet_actuel' not in st.session_state:
-        st.session_state.projet_actuel = pd.DataFrame([{"Perle" : "Charms nœud de papillon" "Charms étoile" "Cœur magnétique" "Perle cristal 3mm" "Aiguille bout rond", "Quantité": 1}])
+        st.session_state.projet_actuel = pd.DataFrame([{"Perle": "Maillon", "Quantité": 1}])
 
     tab_stock, tab_calcul = st.tabs(["📦 Mon Stock", "💍 Calculateur Prix & Temps"])
 
     with tab_stock:
         st.subheader("Répertoire des prix")
-        st.caption("Modifie les prix ici. Ils seront sauvegardés tant que l'appli est ouverte.")
-        st.session_state.stock_perles = st.data_editor(
-            st.session_state.stock_perles, 
-            num_rows="dynamic",
-            key="editor_stock"
-        )
+        st.session_state.stock_perles = st.data_editor(st.session_state.stock_perles, num_rows="dynamic", key="editor_stock")
 
     with tab_calcul:
         st.subheader("1. Matériel utilisé")
@@ -280,7 +320,6 @@ def page_boutique():
         if not liste_noms:
             st.warning("Le stock est vide !")
         else:
-            # Éditeur pour choisir les perles du bijou
             projet_df = st.data_editor(
                 st.session_state.projet_actuel,
                 num_rows="dynamic",
@@ -290,48 +329,30 @@ def page_boutique():
                 },
                 key="calculateur_projet_editor"
             )
-            # Sauvegarde de l'état pour ne pas perdre la saisie
             st.session_state.projet_actuel = projet_df
 
             st.markdown("---")
-            st.subheader("2. Main d'œuvre (Temps passé)")
-            
+            st.subheader("2. Main d'œuvre")
             c_taux, c_h, c_m = st.columns(3)
-            taux_horaire = c_taux.number_input("Taux horaire (€/h)", min_value=0.0, value=10.0, step=0.5, help="Combien veux-tu gagner par heure ?")
-            heures = c_h.number_input("Heures", min_value=0, value=0, step=1)
-            minutes = c_m.number_input("Minutes", min_value=0, max_value=59, value=30, step=5)
+            taux_horaire = c_taux.number_input("Taux horaire (€/h)", min_value=0.0, value=10.0, step=0.5)
+            heures = c_h.number_input("Heures", min_value=0, value=0)
+            minutes = c_m.number_input("Minutes", min_value=0, max_value=59, value=30)
 
             if st.button("💰 Calculer le PRIX FINAL"):
-                # Calcul Matériel
                 stock = st.session_state.stock_perles
-                # Fusionner le projet avec le stock pour avoir les prix
                 resultat = projet_df.merge(stock, left_on="Perle", right_on="Nom de la Perle", how="left")
                 
-                # Gestion des perles introuvables (si on a supprimé du stock entre temps)
                 if resultat["Prix Unitaire (€)"].isnull().any():
-                    st.error("Attention : Certaines perles du projet ne sont plus dans le stock !")
+                    st.error("Perle manquante dans le stock !")
                 else:
-                    cout_materiel = (resultat["Quantité"] * resultat["Prix Unitaire (€)"]).sum()
+                    cout_mat = (resultat["Quantité"] * resultat["Prix Unitaire (€)"]).sum()
+                    cout_mo = (heures + minutes/60) * taux_horaire
+                    total = cout_mat + cout_mo
+                    prix_vende = total * 2 + 2
                     
-                    # Calcul Main d'œuvre
-                    temps_total_heures = heures + (minutes / 60.0)
-                    cout_travail = temps_total_heures * taux_horaire
+                    st.metric("Coût de Revient", f"{total:.2f} €")
+                    st.success(f"**✨ PRIX CONSEILLÉ : {prix_vende:.2f} € ✨**")
                     
-                    # Totaux
-                    cout_de_revient = cout_materiel + cout_travail
-                    prix_vente = cout_de_revient * 2 + 2
-                    
-                    # --- AFFICHAGE DES RÉSULTATS ---
-                    st.markdown("### 🧾 Résultat")
-                    
-                    col1, col2, col3 = st.columns(3)
-                    col1.metric("Coût Matériel", f"{cout_materiel:.2f} €")
-                    col2.metric("Coût Travail", f"{cout_travail:.2f} €", help=f"{heures}h{minutes} à {taux_horaire}€/h")
-                    col3.metric("Coût de Revient Total", f"{cout_de_revient:.2f} €", delta="Coût réel")
-                    
-                    st.success(f"**✨ PRIX DE VENTE CONSEILLÉ (x2) + négotiation 2€ : {prix_vente:.2f} € ✨**")
-                    st.caption(f"Ce prix inclut tes perles, ton temps de travail ({cout_travail:.2f}€) et une marge de bénéfice de {prix_vente - cout_de_revient:.2f}€.")
-
 # --- MENU PRINCIPAL (Sidebar) ---
 def main():
     st.sidebar.title("Super Calc Maths Pour Ma Nana <3")
@@ -355,6 +376,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
