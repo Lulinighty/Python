@@ -352,6 +352,20 @@ def page_boutique():
                     
                     st.metric("Coût de Revient", f"{total:.2f} €")
                     st.success(f"**✨ PRIX CONSEILLÉ (x2 pour la marge + 2€ pour la négotiation) : {prix_vende:.2f} € ✨**")
+
+                    # AFFICHAGE DÉTAILLÉ
+                    st.write("### 🧾 Détail du calcul")
+                    
+                    # On affiche le coût des perles en premier comme demandé
+                    st.info(f"**Somme totale des perles : {cout_mat:.4f} €**")
+                    
+                    col1, col2 = st.columns(2)
+                    with col1:
+                        st.metric("Coût Matériel", f"{cout_mat:.2f} €")
+                        st.metric("Coût Main d'œuvre", f"{cout_mo:.2f} €")
+                    with col2:
+                        st.metric("Coût de Revient Total", f"{total_revient:.2f} €")
+                        st.success(f"**Prix de vente : {prix_vente:.2f} €**")
                     
 # --- MENU PRINCIPAL (Sidebar) ---
 def main():
@@ -376,6 +390,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
