@@ -319,7 +319,7 @@ def page_boutique():
                     
                     # Totaux
                     cout_de_revient = cout_materiel + cout_travail
-                    prix_vente = cout_de_revient * 2
+                    prix_vente = cout_de_revient * 2 + 2
                     
                     # --- AFFICHAGE DES RÉSULTATS ---
                     st.markdown("### 🧾 Résultat")
@@ -329,7 +329,7 @@ def page_boutique():
                     col2.metric("Coût Travail", f"{cout_travail:.2f} €", help=f"{heures}h{minutes} à {taux_horaire}€/h")
                     col3.metric("Coût de Revient Total", f"{cout_de_revient:.2f} €", delta="Coût réel")
                     
-                    st.success(f"**✨ PRIX DE VENTE CONSEILLÉ (x2) : {prix_vente:.2f} € ✨**")
+                    st.success(f"**✨ PRIX DE VENTE CONSEILLÉ (x2) + négotiation 2€ : {prix_vente:.2f} € ✨**")
                     st.caption(f"Ce prix inclut tes perles, ton temps de travail ({cout_travail:.2f}€) et une marge de bénéfice de {prix_vente - cout_de_revient:.2f}€.")
 
 # --- MENU PRINCIPAL (Sidebar) ---
@@ -355,6 +355,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
