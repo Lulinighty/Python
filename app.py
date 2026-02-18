@@ -249,11 +249,11 @@ def page_moyenne():
                 # Barre de progression visuelle
                 st.progress(min(moyenne / 20, 1.0))
 
-# --- 5. BOUTIQUE DE PERLES (VERSION CORRIGÉE) ---
+# --- 5. BOUTIQUE DE PERLES (VERSION AVEC DÉTAIL COMPLET) ---
 def page_boutique():
     show_header("Gestion Boutique Perles", "💎")
     
-    # 1. Initialisation du Stock (La liste complète avec tes nouveaux prix)
+    # 1. Initialisation du Stock (La liste complète avec tes prix)
     if 'stock_perles' not in st.session_state:
         data_initiale = [
             {"Nom de la Perle": "Charms nœud de papillon", "Prix Unitaire (€)": 0.0625},
@@ -340,24 +340,33 @@ def page_boutique():
 
             if st.button("💰 Calculer le PRIX FINAL"):
                 stock = st.session_state.stock_perles
-                # Fusion des données pour récupérer les prix
                 resultat = projet_df.merge(stock, left_on="Perle", right_on="Nom de la Perle", how="left")
                 
                 if resultat["Prix Unitaire (€)"].isnull().any():
                     st.error("Une perle sélectionnée n'est pas présente dans ton stock !")
                 else:
-                    # CALCULS (Utilisation de noms de variables cohérents)
+                    # --- CALCULS ---
+                    # 1. Création de la liste des coûts par ligne pour l'affichage complet
+                    details_calcul = []
+                    for _, row in resultat.iterrows():
+                        cout_ligne = row['Quantité'] * row['Prix Unitaire (€)']
+                        details_calcul.append(f"{row['Perle']} ({row['Quantité']} x {row['Prix Unitaire (€)']})")
+                    
+                    # On assemble la chaîne de caractères "Perle A + Perle B..."
+                    formule_complete = " + ".join(details_calcul)
+                    
                     cout_materiel = (resultat["Quantité"] * resultat["Prix Unitaire (€)"]).sum()
                     cout_main_oeuvre = (heures + minutes/60) * taux_horaire
                     total_revient = cout_materiel + cout_main_oeuvre
                     prix_final = total_revient * 2 + 2
                     
-                    # AFFICHAGE DES RÉSULTATS
+                    # --- AFFICHAGE ---
                     st.markdown("---")
-                    st.write("### 🧾 Détail du calcul")
+                    st.subheader("🧾 Résultat du calcul")
                     
-                    # Ta demande : Afficher la somme des perles avant tout
-                    st.info(f"**Somme totale des perles : {cout_materiel:.4f} €**")
+                    # Affichage du calcul complet demandé
+                    st.markdown("**Calcul détaillé des perles :**")
+                    st.code(f"{formule_complete} = {cout_materiel:.4f} €")
                     
                     col1, col2 = st.columns(2)
                     with col1:
@@ -366,8 +375,8 @@ def page_boutique():
                     
                     with col2:
                         st.metric("Coût de Revient Total", f"{total_revient:.2f} €")
-                        st.success(f"**✨ PRIX DE VENTE CONSEILLÉ : {prix_final:.2f} € ✨**")
-                    
+                        st.success(f"**✨ PRIX DE VENTE : {prix_final:.2f} € ✨**")
+                        
 # --- MENU PRINCIPAL (Sidebar) ---
 def main():
     st.sidebar.title("Super Calc Maths Pour Ma Nana <3")
@@ -391,6 +400,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
