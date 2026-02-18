@@ -249,11 +249,11 @@ def page_moyenne():
                 # Barre de progression visuelle
                 st.progress(min(moyenne / 20, 1.0))
 
-# --- 5. BOUTIQUE DE PERLES ---
+# --- 5. BOUTIQUE DE PERLES (VERSION CORRIGÉE) ---
 def page_boutique():
     show_header("Gestion Boutique Perles", "💎")
     
-    # Initialisation du Stock avec ta nouvelle liste
+    # 1. Initialisation du Stock (La liste complète avec tes nouveaux prix)
     if 'stock_perles' not in st.session_state:
         data_initiale = [
             {"Nom de la Perle": "Charms nœud de papillon", "Prix Unitaire (€)": 0.0625},
@@ -340,32 +340,33 @@ def page_boutique():
 
             if st.button("💰 Calculer le PRIX FINAL"):
                 stock = st.session_state.stock_perles
+                # Fusion des données pour récupérer les prix
                 resultat = projet_df.merge(stock, left_on="Perle", right_on="Nom de la Perle", how="left")
                 
                 if resultat["Prix Unitaire (€)"].isnull().any():
-                    st.error("Perle manquante dans le stock !")
+                    st.error("Une perle sélectionnée n'est pas présente dans ton stock !")
                 else:
-                    cout_mat = (resultat["Quantité"] * resultat["Prix Unitaire (€)"]).sum()
-                    cout_mo = (heures + minutes/60) * taux_horaire
-                    total = cout_mat + cout_mo
-                    prix_vende = total * 2 + 2
+                    # CALCULS (Utilisation de noms de variables cohérents)
+                    cout_materiel = (resultat["Quantité"] * resultat["Prix Unitaire (€)"]).sum()
+                    cout_main_oeuvre = (heures + minutes/60) * taux_horaire
+                    total_revient = cout_materiel + cout_main_oeuvre
+                    prix_final = total_revient * 2 + 2
                     
-                    st.metric("Coût de Revient", f"{total:.2f} €")
-                    st.success(f"**✨ PRIX CONSEILLÉ (x2 pour la marge + 2€ pour la négotiation) : {prix_vende:.2f} € ✨**")
-
-                    # AFFICHAGE DÉTAILLÉ
+                    # AFFICHAGE DES RÉSULTATS
+                    st.markdown("---")
                     st.write("### 🧾 Détail du calcul")
                     
-                    # On affiche le coût des perles en premier comme demandé
-                    st.info(f"**Somme totale des perles : {cout_mat:.4f} €**")
+                    # Ta demande : Afficher la somme des perles avant tout
+                    st.info(f"**Somme totale des perles : {cout_materiel:.4f} €**")
                     
                     col1, col2 = st.columns(2)
                     with col1:
-                        st.metric("Coût Matériel", f"{cout_mat:.2f} €")
-                        st.metric("Coût Main d'œuvre", f"{cout_mo:.2f} €")
+                        st.metric("Coût Matériel", f"{cout_materiel:.2f} €")
+                        st.metric("Coût Main d'œuvre", f"{cout_main_oeuvre:.2f} €")
+                    
                     with col2:
                         st.metric("Coût de Revient Total", f"{total_revient:.2f} €")
-                        st.success(f"**Prix de vente : {prix_vente:.2f} €**")
+                        st.success(f"**✨ PRIX DE VENTE CONSEILLÉ : {prix_final:.2f} € ✨**")
                     
 # --- MENU PRINCIPAL (Sidebar) ---
 def main():
@@ -390,6 +391,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
