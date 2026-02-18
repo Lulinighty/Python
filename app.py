@@ -249,6 +249,90 @@ def page_moyenne():
                 # Barre de progression visuelle
                 st.progress(min(moyenne / 20, 1.0))
 
+# --- 5. BOUTIQUE DE PERLES ---
+def page_boutique():
+    show_header("Gestion Boutique Perles", "💎")
+
+    # Initialisation du stock
+    if 'stock_perles' not in st.session_state:
+        st.session_state.stock_perles = pd.DataFrame({
+            "Nom de la Perle": ["Perle Dorée", "Perle Verre Bleue", "Fermoir Argent"],
+            "Prix Unitaire (€)": [0.05, 0.10, 0.50]
+        })
+
+    # Initialisation du projet actuel
+    if 'projet_actuel' not in st.session_state:
+        st.session_state.projet_actuel = pd.DataFrame([{"Perle": "Perle Dorée", "Quantité": 10}])
+
+    tab_stock, tab_calcul = st.tabs(["📦 Mon Stock", "💍 Calculateur Prix & Temps"])
+
+    with tab_stock:
+        st.subheader("Répertoire des prix")
+        st.caption("Modifie les prix ici. Ils seront sauvegardés tant que l'appli est ouverte.")
+        st.session_state.stock_perles = st.data_editor(
+            st.session_state.stock_perles, 
+            num_rows="dynamic",
+            key="editor_stock"
+        )
+
+    with tab_calcul:
+        st.subheader("1. Matériel utilisé")
+        liste_noms = st.session_state.stock_perles["Nom de la Perle"].tolist()
+        
+        if not liste_noms:
+            st.warning("Le stock est vide !")
+        else:
+            # Éditeur pour choisir les perles du bijou
+            projet_df = st.data_editor(
+                st.session_state.projet_actuel,
+                num_rows="dynamic",
+                column_config={
+                    "Perle": st.column_config.SelectboxColumn("Perle", options=liste_noms, required=True),
+                    "Quantité": st.column_config.NumberColumn("Quantité", min_value=1, step=1)
+                },
+                key="calculateur_projet_editor"
+            )
+            # Sauvegarde de l'état pour ne pas perdre la saisie
+            st.session_state.projet_actuel = projet_df
+
+            st.markdown("---")
+            st.subheader("2. Main d'œuvre (Temps passé)")
+            
+            c_taux, c_h, c_m = st.columns(3)
+            taux_horaire = c_taux.number_input("Taux horaire (€/h)", min_value=0.0, value=10.0, step=0.5, help="Combien veux-tu gagner par heure ?")
+            heures = c_h.number_input("Heures", min_value=0, value=0, step=1)
+            minutes = c_m.number_input("Minutes", min_value=0, max_value=59, value=30, step=5)
+
+            if st.button("💰 Calculer le PRIX FINAL"):
+                # Calcul Matériel
+                stock = st.session_state.stock_perles
+                # Fusionner le projet avec le stock pour avoir les prix
+                resultat = projet_df.merge(stock, left_on="Perle", right_on="Nom de la Perle", how="left")
+                
+                # Gestion des perles introuvables (si on a supprimé du stock entre temps)
+                if resultat["Prix Unitaire (€)"].isnull().any():
+                    st.error("Attention : Certaines perles du projet ne sont plus dans le stock !")
+                else:
+                    cout_materiel = (resultat["Quantité"] * resultat["Prix Unitaire (€)"]).sum()
+                    
+                    # Calcul Main d'œuvre
+                    temps_total_heures = heures + (minutes / 60.0)
+                    cout_travail = temps_total_heures * taux_horaire
+                    
+                    # Totaux
+                    cout_de_revient = cout_materiel + cout_travail
+                    prix_vente = cout_de_revient * 2
+                    
+                    # --- AFFICHAGE DES RÉSULTATS ---
+                    st.markdown("### 🧾 Résultat")
+                    
+                    col1, col2, col3 = st.columns(3)
+                    col1.metric("Coût Matériel", f"{cout_materiel:.2f} €")
+                    col2.metric("Coût Travail", f"{cout_travail:.2f} €", help=f"{heures}h{minutes} à {taux_horaire}€/h")
+                    col3.metric("Coût de Revient Total", f"{cout_de_revient:.2f} €", delta="Coût réel")
+                    
+                    st.success(f"**✨ PRIX DE VENTE CONSEILLÉ (x2) : {prix_vente:.2f} € ✨**")
+                    st.caption(f"Ce prix inclut tes perles, ton temps de travail ({cout_travail:.2f}€) et une marge de bénéfice de {prix_vente - cout_de_revient:.2f}€.")
 
 # --- MENU PRINCIPAL (Sidebar) ---
 def main():
@@ -270,6 +354,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
-
