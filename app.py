@@ -197,8 +197,8 @@ def page_moyenne():
     # Création d'un tableau vide par défaut
     default_notes = pd.DataFrame({
         "Matière": ["Maths", "E.S", "Anglais","Espagnol", "EPS", "Français", "Hist-Geo", "EMC", "LLCE Espagnol", "SVT", "Cinéma" ],
-        "Note": [15.0, 12.0, 14.5],
-        "Coefficient": [4, 3, 2]
+        "Note": [10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0, 10.0],
+        "Coefficient": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]
     })
     
     # Tableau éditable
@@ -270,5 +270,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
