@@ -331,13 +331,7 @@ def page_boutique():
             )
             st.session_state.projet_actuel = projet_df
 
-            st.markdown("---")
-            st.subheader("2. Main d'œuvre")
-            c_taux, c_h, c_m = st.columns(3)
-            taux_horaire = c_taux.number_input("Taux horaire (€/h)", min_value=0.0, value=10.0, step=0.5)
-            heures = c_h.number_input("Heures", min_value=0, value=0)
-            minutes = c_m.number_input("Minutes", min_value=0, max_value=59, value=30)
-
+          
             if st.button("💰 Calculer le PRIX FINAL"):
                 stock = st.session_state.stock_perles
                 resultat = projet_df.merge(stock, left_on="Perle", right_on="Nom de la Perle", how="left")
@@ -356,8 +350,7 @@ def page_boutique():
                     formule_complete = " + ".join(details_calcul)
                     
                     cout_materiel = (resultat["Quantité"] * resultat["Prix Unitaire (€)"]).sum()
-                    cout_main_oeuvre = (heures + minutes/60) * taux_horaire
-                    total_revient = cout_materiel + cout_main_oeuvre
+                    total_revient = cout_materiel 
                     prix_final = total_revient * 2 + 2
                     
                     # --- AFFICHAGE ---
@@ -371,7 +364,6 @@ def page_boutique():
                     col1, col2 = st.columns(2)
                     with col1:
                         st.metric("Coût Matériel", f"{cout_materiel:.2f} €")
-                        st.metric("Coût Main d'œuvre", f"{cout_main_oeuvre:.2f} €")
                     
                     with col2:
                         st.metric("Coût de Revient Total", f"{total_revient:.2f} €")
@@ -400,6 +392,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
