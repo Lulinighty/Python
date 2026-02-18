@@ -351,7 +351,7 @@ def page_boutique():
                     prix_vende = total * 2 + 2
                     
                     st.metric("Coût de Revient", f"{total:.2f} €")
-                    st.success(f"**✨ PRIX CONSEILLÉ : {prix_vende:.2f} € ✨**")
+                    st.success(f"**✨ PRIX CONSEILLÉ (x2 pour la marge + 2€ pour la négotiation) : {prix_vende:.2f} € ✨**")
                     
 # --- MENU PRINCIPAL (Sidebar) ---
 def main():
@@ -376,6 +376,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
