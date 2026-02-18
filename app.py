@@ -253,7 +253,7 @@ def page_moyenne():
 def page_boutique():
     show_header("Gestion Boutique Perles", "💎")
     
-    # 1. Initialisation du Stock (La liste complète avec tes prix)
+    # 1. Initialisation du Stock (Stable dans le session_state)
     if 'stock_perles' not in st.session_state:
         data_initiale = [
             {"Nom de la Perle": "Charms nœud de papillon", "Prix Unitaire (€)": 0.0625},
@@ -304,69 +304,74 @@ def page_boutique():
         ]
         st.session_state.stock_perles = pd.DataFrame(data_initiale)
 
+    # Initialisation du projet si vide
     if 'projet_actuel' not in st.session_state:
         st.session_state.projet_actuel = pd.DataFrame([{"Perle": "Maillon", "Quantité": 1}])
 
-    tab_stock, tab_calcul = st.tabs(["📦 Mon Stock", "💍 Calculateur Prix & Temps"])
+    tab_stock, tab_calcul = st.tabs(["📦 Mon Stock", "💍 Calculateur Prix"])
 
     with tab_stock:
         st.subheader("Répertoire des prix")
-        st.session_state.stock_perles = st.data_editor(st.session_state.stock_perles, num_rows="dynamic", key="editor_stock")
+        # On sauvegarde les modifs directement dans le state
+        st.session_state.stock_perles = st.data_editor(
+            st.session_state.stock_perles, 
+            num_rows="dynamic", 
+            key="editor_stock_unique"
+        )
 
     with tab_calcul:
-        st.subheader("1. Matériel utilisé")
-        liste_noms = st.session_state.stock_perles["Nom de la Perle"].tolist()
+        st.subheader("1. Matériel utilisé pour ce bijou")
+        liste_noms = sorted(st.session_state.stock_perles["Nom de la Perle"].unique().tolist())
         
         if not liste_noms:
             st.warning("Le stock est vide !")
         else:
+            # IMPORTANT : On utilise le retour de data_editor pour les calculs
             projet_df = st.data_editor(
                 st.session_state.projet_actuel,
                 num_rows="dynamic",
                 column_config={
-                    "Perle": st.column_config.SelectboxColumn("Perle", options=liste_noms, required=True),
-                    "Quantité": st.column_config.NumberColumn("Quantité", min_value=1, step=1)
+                    "Perle": st.column_config.SelectboxColumn("Sélectionner la Perle", options=liste_noms, required=True),
+                    "Quantité": st.column_config.NumberColumn("Quantité", min_value=1, step=1, default=1)
                 },
-                key="calculateur_projet_editor"
+                key="editor_projet_unique"
             )
+            # Mise à jour du state pour garder la mémoire du projet
             st.session_state.projet_actuel = projet_df
 
-          
-            if st.button("💰 Calculer le PRIX FINAL"):
-                stock = st.session_state.stock_perles
-                resultat = projet_df.merge(stock, left_on="Perle", right_on="Nom de la Perle", how="left")
+            if st.button("💰 Calculer le PRIX FINAL", type="primary"):
+                # Nettoyage des lignes vides éventuelles
+                df_calc = projet_df.dropna(subset=["Perle"])
+                
+                # Jointure pour récupérer les prix
+                resultat = df_calc.merge(
+                    st.session_state.stock_perles, 
+                    left_on="Perle", 
+                    right_on="Nom de la Perle", 
+                    how="left"
+                )
                 
                 if resultat["Prix Unitaire (€)"].isnull().any():
-                    st.error("Une perle sélectionnée n'est pas présente dans ton stock !")
+                    st.error("Oups ! Une perle sélectionnée n'a pas de prix dans le stock.")
                 else:
-                    # --- CALCULS ---
-                    # 1. Création de la liste des coûts par ligne pour l'affichage complet
-                    details_calcul = []
-                    for _, row in resultat.iterrows():
-                        cout_ligne = row['Quantité'] * row['Prix Unitaire (€)']
-                        details_calcul.append(f"{row['Perle']} ({row['Quantité']} x {row['Prix Unitaire (€)']})")
+                    # Calculs
+                    resultat["Total Ligne"] = resultat["Quantité"] * resultat["Prix Unitaire (€)"]
+                    cout_materiel = resultat["Total Ligne"].sum()
                     
-                    # On assemble la chaîne de caractères "Perle A + Perle B..."
-                    formule_complete = " + ".join(details_calcul)
+                    # Formule : (Coût * 2) + 2€ de main d'oeuvre/frais
+                    prix_final = (cout_materiel * 2) + 2
                     
-                    cout_materiel = (resultat["Quantité"] * resultat["Prix Unitaire (€)"]).sum()
-                    total_revient = cout_materiel 
-                    prix_final = total_revient * 2 + 2
-                    
-                    # --- AFFICHAGE ---
+                    # Détail de la formule
+                    details = [f"{row['Perle']} ({int(row['Quantité'])} x {row['Prix Unitaire (€)']}€)" for _, row in resultat.iterrows()]
+                    formule_texte = " + ".join(details)
+
                     st.markdown("---")
-                    st.subheader("🧾 Résultat du calcul")
+                    st.success(f"### Prix de vente conseillé : {prix_final:.2f} €")
                     
-                    # Affichage du calcul complet demandé
-                    st.markdown("**Calcul détaillé des perles :**")
-                    st.code(f"{formule_complete} = {cout_materiel:.4f} €")
-                    
-                    col1, col2 = st.columns(2)
-                    with col1:
-                        st.metric("Coût Matériel", f"{cout_materiel:.2f} €")
-                    
-                    with col2:
-                        st.success(f"**✨ PRIX DE VENTE : {prix_final:.2f} € ✨**")
+                    with st.expander("Voir le détail du calcul"):
+                        st.write(f"**Détail perles :** {formule_texte}")
+                        st.write(f"**Total matériel :** {cout_materiel:.4f} €")
+                        st.write(f"**Calcul :** ({cout_materiel:.2f} x 2) + 2€ = {prix_final:.2f}€")
                         
 # --- MENU PRINCIPAL (Sidebar) ---
 def main():
@@ -391,6 +396,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
