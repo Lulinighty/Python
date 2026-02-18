@@ -260,7 +260,7 @@ def page_boutique():
 
     # Initialisation du projet actuel
     if 'projet_actuel' not in st.session_state:
-        st.session_state.projet_actuel = pd.DataFrame([{"Charms nœud de papillon", "Charms étoile", "Cœur magnétique", "Perle cristal 3mm", "Aiguille bout rond" "Quantité": 0}])
+        st.session_state.projet_actuel = pd.DataFrame([{"Charms nœud de papillon", "Charms étoile", "Cœur magnétique", "Perle cristal 3mm", "Aiguille bout rond" "Quantité": 1}])
 
     tab_stock, tab_calcul = st.tabs(["📦 Mon Stock", "💍 Calculateur Prix & Temps"])
 
@@ -355,6 +355,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
