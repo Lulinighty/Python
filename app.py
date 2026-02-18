@@ -337,7 +337,7 @@ def main():
     st.sidebar.title("Super Calc Maths Pour Ma Nana <3")
     
     # Mise à jour du menu avec la nouvelle option
-    choix = st.sidebar.radio("Menu", ["Probabilités", "Suites", "Fonctions Affines", "Moyenne Scolaire"])
+    choix = st.sidebar.radio("Menu", ["Probabilités", "Suites", "Fonctions Affines", "Moyenne Scolaire, "💎 Boutique de Perles"])
     
     st.sidebar.info("Application compatible Mobile & PC")
 
@@ -355,3 +355,4 @@ def main():
 
 if __name__ == "__main__":
     main()
+
