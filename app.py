@@ -351,6 +351,9 @@ def main():
         page_fonctions()
     elif choix == "Moyenne Scolaire":  # Appel de la nouvelle page
         page_moyenne()
+    elif choix == "Boutique de Perles":
+        page_boutique()
 
 if __name__ == "__main__":
     main()
+
