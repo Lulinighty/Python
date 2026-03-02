@@ -57,7 +57,7 @@ def show_header(title, emoji):
 def page_probabilites():
     show_header("Probabilités", "🎲")
     
-    tab1, tab2, tab3, tab4 = st.tabs(["Simple", "Combinatoire", "Binomiale", "🌳 Arbre"])
+    tab1, tab2, tab3, tab4 = st.tabs(["Simple", "Combinatoire", "Binomiale", "Arbre"])
     
     with tab1:
         st.subheader("Probabilité Simple")
@@ -403,6 +403,7 @@ def main():
 
 if __name__ == "__main__":
     main()
+
 
 
 
